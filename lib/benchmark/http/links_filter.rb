@@ -18,57 +18,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'command/concurrency'
-require_relative 'command/spider'
-
-require_relative 'version'
-require 'samovar'
+require 'trenni/sanitize'
 
 module Benchmark
 	module HTTP
-		module Command
-			def self.parse(*args)
-				Top.parse(*args)
+		class LinksFilter < Trenni::Sanitize::Filter
+			def initialize(*)
+				super
+				
+				@base = nil
+				@links = []
 			end
 			
-			class Top < Samovar::Command
-				self.description = "An asynchronous HTTP server benchmark."
-				
-				options do
-					option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-					option '-h/--help', "Print out help information."
-					option '-v/--version', "Print out the application version."
+			attr :base
+			attr :links
+			
+			def filter(node)
+				if node.name == 'base'
+					@base = node['href']
+				elsif node.name == 'a'
+					@links << node['href']
 				end
 				
-				nested '<command>',
-					'concurrency' => Concurrency,
-					'spider' => Spider
-				
-				def verbose?
-					@options[:logging] == :verbose
-				end
-				
-				def quiet?
-					@options[:logging] == :quiet
-				end
-				
-				def invoke(program_name: File.basename($0))
-					if verbose?
-						Async.logger.level = Logger::DEBUG
-					elsif quiet?
-						Async.logger.level = Logger::WARN
-					else
-						Async.logger.level = Logger::INFO
-					end
-					
-					if @options[:version]
-						puts "benchmark-http v#{Falcon::VERSION}"
-					elsif @options[:help] or @command.nil?
-						print_usage(program_name)
-					else
-						@command.invoke(self)
-					end
-				end
+				node.skip!(TAG)
 			end
 		end
 	end

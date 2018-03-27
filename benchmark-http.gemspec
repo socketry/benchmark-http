@@ -17,6 +17,9 @@ Gem::Specification.new do |spec|
 
 	spec.add_dependency("async-io", "~> 1.5")
 	spec.add_dependency("async-http", "~> 0.9")
+	spec.add_dependency("async-await")
+	
+	spec.add_dependency("trenni-sanitize")
 	
 	spec.add_dependency('samovar', "~> 1.3")
 

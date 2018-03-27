@@ -21,7 +21,7 @@
 module Benchmark
 	module HTTP
 		class Statistics
-			def initialize(concurrency)
+			def initialize(concurrency = 1)
 				@samples = []
 				@duration = 0
 				
@@ -105,7 +105,9 @@ module Benchmark
 			end
 			
 			def print(out = STDOUT)
-				out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. S/D: #{standard_deviation}."
+				if @samples.any?
+					out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. S/D: #{standard_deviation}."
+				end
 			end
 			
 			private
