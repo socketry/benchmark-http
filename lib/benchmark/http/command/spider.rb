@@ -20,6 +20,7 @@
 
 require_relative '../seconds'
 require_relative '../statistics'
+require_relative '../links_filter'
 
 require 'async'
 require 'async/http/client'
@@ -39,7 +40,7 @@ module Benchmark
 				
 				many :urls, "One or more hosts to benchmark"
 				
-				async def fetch(statistics, client, url, depth = 4, fetched = Set.new)
+				async def fetch(statistics, client, url, depth = 10, fetched = Set.new)
 					return if fetched.include?(url) or depth == 0
 					
 					fetched << url
@@ -47,7 +48,7 @@ module Benchmark
 					request_uri = url.request_uri
 					puts "GET #{url} (depth = #{depth})"
 					
-					response = timeout(10) do
+					response = timeout(60) do
 						statistics.measure do
 							client.get(request_uri, {
 								':authority' => url.host,
@@ -56,13 +57,11 @@ module Benchmark
 						end
 					end
 					
-					puts "response: #{response.inspect}"
-					
 					if response.status >= 300 && response.status < 400
 						location = url + response.headers['location']
 						puts "Following redirect to #{location}"
 						if location.host == url.host
-							return fetch(statistics, client, location, depth-1, fetched)
+							return fetch(statistics, client, location, depth-1, fetched).wait
 						end
 					end
 					
@@ -75,17 +74,17 @@ module Benchmark
 					base = url
 					
 					begin
-						html = HTML.parse(response.body)
+						filter = LinksFilter.parse(response.body)
 					rescue
 						# Async.logger.error($!)
 						return
 					end
 					
-					if html.base
-						base = base + html.base
+					if filter.base
+						base = base + filter.base
 					end
 					
-					html.links.each do |href|
+					filter.links.each do |href|
 						begin
 							full_url = base + href
 							
@@ -96,6 +95,8 @@ module Benchmark
 							# puts "Could not fetch #{href}, relative to #{base}."
 						end
 					end
+					
+					barrier!
 				rescue Async::TimeoutError
 					Async.logger.error("Timeout while fetching #{url}")
 				rescue StandardError

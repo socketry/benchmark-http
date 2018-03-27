@@ -106,7 +106,7 @@ module Benchmark
 			
 			def print(out = STDOUT)
 				if @samples.any?
-					out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. S/D: #{standard_deviation}."
+					out.puts "#{@samples.count} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
 				end
 			end
 			
