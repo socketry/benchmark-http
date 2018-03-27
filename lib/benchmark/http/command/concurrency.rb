@@ -35,10 +35,14 @@ module Benchmark
 				
 				options do
 					option '-t/--threshold <factor>', "The acceptable latency penalty when making concurrent requests", default: 1.2, type: Float
-					option '-c/--confidence <ratio>', "The confidence required when computing latency ", default: 2.0, type: Float
+					option '-c/--confidence <factor>', "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
 				end
 				
 				many :hosts, "One or more hosts to benchmark"
+				
+				def confidence_factor
+					1.0 - @options[:confidence]
+				end
 				
 				def measure_performance(concurrency, endpoint, request_path)
 					puts "I am running #{concurrency} asynchronous tasks that will each make sequential requests..."
@@ -50,7 +54,7 @@ module Benchmark
 						task.async do
 							client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
 							
-							statistics.sample(@options[:confidence]) do
+							statistics.sample(confidence_factor) do
 								response = client.get(request_path)
 							end
 							
@@ -59,7 +63,6 @@ module Benchmark
 					end.each(&:wait)
 					
 					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
-					# puts "\t#{statistics.samples.inspect}"
 					puts "\t          Variance: #{Seconds[statistics.variance]}"
 					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
 					puts "\t    Standard Error: #{statistics.standard_error}"

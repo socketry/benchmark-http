@@ -95,13 +95,13 @@ module Benchmark
 				return result
 			end
 			
-			def sample(confidence_ratio, &block)
+			def sample(confidence_factor, &block)
 				# warmup
 				yield
 				
 				begin
 					measure(&block)
-				end until confident?(confidence_ratio)
+				end until confident?(confidence_factor)
 			end
 			
 			def print(out = STDOUT)
@@ -110,8 +110,8 @@ module Benchmark
 			
 			private
 			
-			def confident?(ratio)
-				(@samples.count > @concurrency) && self.standard_error < (self.average * 0.01)
+			def confident?(factor)
+				(@samples.count > @concurrency) && self.standard_error < (self.average * factor)
 			end
 		end
 	end
