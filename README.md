@@ -22,6 +22,8 @@ You can run `benchmark-http` is a top level tool for invoking specific benchmark
 
 ### Concurrency
 
+This benchmark determines the optimal level of concurrency (maximise throughput while keeping latency to a minimum).
+
 ```shell
 $ benchmark-http concurrency https://www.oriontransfer.co.nz/welcome/index
 I am going to benchmark https://www.oriontransfer.co.nz/welcome/index...

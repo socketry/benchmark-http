@@ -6,9 +6,8 @@ Gem::Specification.new do |spec|
 	spec.authors       = ["Samuel Williams"]
 	spec.email         = ["samuel.williams@oriontransfer.co.nz"]
 
-	spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-	spec.description   = %q{TODO: Write a longer description or delete this line.}
-	spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+	spec.summary       = "An asynchronous benchmark toolbox for modern HTTP servers."
+	spec.homepage      = "https://github.com/socketry/benchmark-http"
 
 	spec.files         = `git ls-files -z`.split("\x0").reject do |f|
 		f.match(%r{^(test|spec|features)/})
