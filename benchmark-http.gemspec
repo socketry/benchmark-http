@@ -15,7 +15,10 @@ Gem::Specification.new do |spec|
 	spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
 	spec.require_paths = ["lib"]
 
-	spec.add_dependency "samovar"
+	spec.add_dependency("async-io", "~> 1.5")
+	spec.add_dependency("async-http", "~> 0.9")
+	
+	spec.add_dependency('samovar', "~> 1.3")
 
 	spec.add_development_dependency "bundler", "~> 1.16"
 	spec.add_development_dependency "rake", "~> 10.0"
