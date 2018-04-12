@@ -74,7 +74,7 @@ module Benchmark
 					base = url
 					
 					begin
-						filter = LinksFilter.parse(response.body)
+						filter = LinksFilter.parse(response.read)
 					rescue
 						# Async.logger.error($!)
 						return
