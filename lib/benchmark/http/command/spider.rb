@@ -46,15 +46,14 @@ module Benchmark
 					fetched << url
 					
 					request_uri = url.request_uri
-					puts "GET #{url} (depth = #{depth})"
 					
-					response = timeout(60) do
-						statistics.measure do
-							client.get(request_uri, {
-								':authority' => url.host,
-								'user-agent' => 'spider',
-							})
-						end
+					response = timeout(10) do
+						client.head(request_uri)
+					end
+					
+					puts "HEAD #{url} -> #{response.version} #{response.status} (#{response.body&.size} bytes)"
+					response.headers.each do |key, value|
+						puts "\t#{key}: #{value}"
 					end
 					
 					if response.status >= 300 && response.status < 400
@@ -67,16 +66,27 @@ module Benchmark
 					
 					content_type = response.headers['content-type']
 					unless content_type&.start_with? 'text/html'
-						# puts "Unsupported content type: #{response.headers['content-type']}"
+						puts "Unsupported content type: #{content_type}"
 						return
 					end
+					
+					puts "GET #{url} (depth = #{depth})"
+					
+					response = timeout(20) do
+						statistics.measure do
+							client.get(request_uri)
+						end
+					end
+					
+					body = response.read
+					puts "GET #{url} -> #{response.version} #{response.status} (#{body.bytesize} bytes)"
 					
 					base = url
 					
 					begin
-						filter = LinksFilter.parse(response.read)
+						filter = LinksFilter.parse(body)
 					rescue
-						# Async.logger.error($!)
+						Async.logger.error($!)
 						return
 					end
 					
@@ -84,19 +94,21 @@ module Benchmark
 						base = base + filter.base
 					end
 					
+					tasks = []
+					
 					filter.links.each do |href|
 						begin
 							full_url = base + href
 							
 							if full_url.host == url.host && full_url.kind_of?(URI::HTTP)
-								fetch(statistics, client, full_url, depth - 1, fetched)
+								tasks << fetch(statistics, client, full_url, depth - 1, fetched)
 							end
 						rescue ArgumentError, URI::InvalidURIError
 							# puts "Could not fetch #{href}, relative to #{base}."
 						end
 					end
 					
-					barrier!
+					tasks.each(&:wait)
 				rescue Async::TimeoutError
 					Async.logger.error("Timeout while fetching #{url}")
 				rescue StandardError
@@ -108,7 +120,7 @@ module Benchmark
 						endpoint = Async::HTTP::URLEndpoint.parse(url)
 						statistics = Statistics.new
 						
-						Async::HTTP::Client.open(endpoint, endpoint.protocol) do |client|
+						Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
 							fetch(statistics, client, endpoint.url).wait
 						end
 						

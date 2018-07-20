@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 	spec.require_paths = ["lib"]
 
 	spec.add_dependency("async-io", "~> 1.5")
-	spec.add_dependency("async-http", "~> 0.17")
+	spec.add_dependency("async-http", "~> 0.27.0")
 	spec.add_dependency("async-await")
 	
 	spec.add_dependency("trenni-sanitize")

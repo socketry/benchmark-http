@@ -1,6 +1,11 @@
 source "https://rubygems.org"
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
-
-# Specify your gem's dependencies in benchmark-http.gemspec
 gemspec
+
+group :development do
+	gem 'pry'
+	
+	gem 'async', path: '../async'
+	gem 'async-io', path: '../async-io'
+	gem 'async-http', path: '../async-http'
+end
