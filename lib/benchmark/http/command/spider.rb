@@ -45,6 +45,43 @@ module Benchmark
 				
 				many :urls, "One or more hosts to benchmark"
 				
+				def log(method, url, response)
+					puts "#{method} #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
+					
+					response.headers.each do |key, value|
+						puts "\t#{key}: #{value}"
+					end if @options[:headers]
+				end
+				
+				def extract_links(url, response)
+					base = url
+					
+					body = response.read
+					
+					begin
+						filter = LinksFilter.parse(body)
+					rescue
+						Async.logger.error($!)
+						return []
+					end
+					
+					if filter.base
+						base = base + filter.base
+					end
+					
+					filter.links.collect do |href|
+						begin
+							full_url = base + href
+							
+							if full_url.host == url.host && full_url.kind_of?(URI::HTTP)
+								yield full_url
+							end
+						rescue ArgumentError, URI::InvalidURIError
+							puts "Could not fetch #{href}, relative to #{base}."
+						end
+					end.compact
+				end
+				
 				async def fetch(statistics, client, url, depth = @options[:depth], fetched = Set.new)
 					return if fetched.include?(url) or depth == 0
 					
@@ -56,11 +93,7 @@ module Benchmark
 						client.head(request_uri)
 					end
 					
-					puts "HEAD #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
-					
-					response.headers.each do |key, value|
-						puts "\t#{key}: #{value}"
-					end if @options[:headers]
+					log("HEAD", url, response)
 					
 					if response.redirection?
 						location = url + response.headers['location']
@@ -69,7 +102,7 @@ module Benchmark
 							return fetch(statistics, client, location, depth-1, fetched).wait
 						else
 							puts "Ignoring redirect to #{location}."
-							return nil
+							return
 						end
 					end
 					
@@ -79,45 +112,17 @@ module Benchmark
 						return
 					end
 					
-					puts "GET #{url} (depth = #{depth})"
-					
 					response = timeout(20) do
 						statistics.measure do
 							client.get(request_uri)
 						end
 					end
 					
-					body = response.read
-					puts "GET #{url} -> #{response.version} #{response.status} (#{body.bytesize} bytes)"
+					log("GET", url, response)
 					
-					base = url
-					
-					begin
-						filter = LinksFilter.parse(body)
-					rescue
-						Async.logger.error($!)
-						return
-					end
-					
-					if filter.base
-						base = base + filter.base
-					end
-					
-					tasks = []
-					
-					filter.links.each do |href|
-						begin
-							full_url = base + href
-							
-							if full_url.host == url.host && full_url.kind_of?(URI::HTTP)
-								tasks << fetch(statistics, client, full_url, depth - 1, fetched)
-							end
-						rescue ArgumentError, URI::InvalidURIError
-							# puts "Could not fetch #{href}, relative to #{base}."
-						end
-					end
-					
-					tasks.each(&:wait)
+					extract_links(url, response) do |href|
+						fetch(statistics, client, href, depth - 1, fetched)
+					end.each(&:wait)
 				rescue Async::TimeoutError
 					Async.logger.error("Timeout while fetching #{url}")
 				rescue StandardError
@@ -125,16 +130,19 @@ module Benchmark
 				end
 				
 				async def invoke(parent)
+					statistics = Statistics.new
+					
 					@urls.each do |url|
 						endpoint = Async::HTTP::URLEndpoint.parse(url)
-						statistics = Statistics.new
 						
 						Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
 							fetch(statistics, client, endpoint.url).wait
 						end
-						
-						statistics.print
 					end
+					
+					statistics.print
+					
+					return statistics
 				end
 			end
 		end

@@ -76,13 +76,17 @@ module Benchmark
 				end
 			end
 			
+			def valid?
+				@samples.count > 1
+			end
+			
 			# Computes Population Variance, σ^2.
 			def variance
-				return nil if @samples.count < 2
-				
-				average = self.average
-				
-				return @samples.map{|n| (n - average)**2}.sum / @samples.count
+				if valid?
+					average = self.average
+					
+					return @samples.map{|n| (n - average)**2}.sum / @samples.count
+				end
 			end
 			
 			# Population Standard Deviation, σ
@@ -141,15 +145,21 @@ module Benchmark
 			end
 			
 			def print(out = STDOUT)
-				if @samples.any?
+				if self.valid?
 					out.puts "#{@samples.count} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+				else
+					out.puts "Not enough samples."
 				end
 			end
 			
 			private
 			
 			def confident?(factor)
-				(@samples.count > @concurrency) && self.standard_error < (self.average * factor)
+				if @samples.count > @concurrency
+					return self.standard_error < (self.average * factor)
+				end
+				
+				return false
 			end
 		end
 		
@@ -168,10 +178,12 @@ module Benchmark
 			end
 			
 			def print(out = STDOUT)
-				if @samples.any?
+				if valid?
 					counts = @responses.sort.collect{|status, count| "#{count}x #{status}"}.join("; ")
 					
 					out.puts "#{@samples.count} samples: #{counts}. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+				else
+					out.puts "Not enough samples."
 				end
 			end
 		end
