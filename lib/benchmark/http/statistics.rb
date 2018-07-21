@@ -98,7 +98,7 @@ module Benchmark
 				end
 			end
 			
-			def add(duration, result)
+			def add(duration, result = nil)
 				@samples << duration
 			end
 			
@@ -161,18 +161,10 @@ module Benchmark
 				@responses = Hash.new{|h,k| 0}
 			end
 			
-			def average
-				if @samples.any?
-					@samples.sum / @samples.count
-				end
-			end
-			
-			def measure(&block)
-				result = super(&block)
+			def add(duration, result)
+				super
 				
 				@responses[result.status] += 1
-				
-				return result
 			end
 			
 			def print(out = STDOUT)
