@@ -18,23 +18,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/clock'
+
 module Benchmark
 	module HTTP
-		class Statistics
-			def initialize(concurrency = 1)
+		class Stopwatch
+			def initialize(concurrency = 0)
 				@samples = []
-				@duration = 0
+				
+				@total_time = 0
+				
+				# The number of currently executing measurements:
+				@count = 0
 				
 				@concurrency = concurrency
+				@start_time = nil
 			end
 			
+			# The individual samples' durations.
 			attr :samples
-			attr :duration
 			
+			# The sequential time of all samples.
+			attr :total_time
+			
+			# The maximum number of executing measurements at any one time.
 			attr :concurrency
 			
+			def duration
+				@samples.sum
+			end
+			
 			def sequential_duration
-				@duration / @concurrency
+				duration / @concurrency
 			end
 			
 			def count
@@ -42,11 +57,11 @@ module Benchmark
 			end
 			
 			def per_second
-				@samples.count.to_f / sequential_duration.to_f
+				@samples.count.to_f / total_time.to_f
 			end
 			
 			def latency
-				@duration.to_f / @samples.count.to_f
+				duration.to_f / count.to_f
 			end
 			
 			def similar?(other, difference = 2.0)
@@ -83,16 +98,37 @@ module Benchmark
 				end
 			end
 			
+			def add(duration, result)
+				@samples << duration
+			end
+			
 			def measure
-				start_time = Time.now
+				@count += 1
+				
+				if @count > @concurrency
+					@concurrency = @count
+				end
+				
+				start_time = Async::Clock.now
+				
+				unless @start_time
+					@start_time = start_time
+				end
 				
 				result = yield
 				
-				duration = Time.now - start_time
-				@samples << duration
-				@duration += duration
+				end_time = Async::Clock.now
+				
+				self.add(end_time - start_time, result)
 				
 				return result
+			ensure
+				@count -= 1
+				
+				if @count == 0
+					@total_time += end_time - @start_time
+					@start_time = nil
+				end
 			end
 			
 			def sample(confidence_factor, &block)
@@ -114,6 +150,37 @@ module Benchmark
 			
 			def confident?(factor)
 				(@samples.count > @concurrency) && self.standard_error < (self.average * factor)
+			end
+		end
+		
+		class Statistics < Stopwatch
+			def initialize(*)
+				super
+				
+				# The count of the status codes seen in the responses:
+				@responses = Hash.new{|h,k| 0}
+			end
+			
+			def average
+				if @samples.any?
+					@samples.sum / @samples.count
+				end
+			end
+			
+			def measure(&block)
+				result = super(&block)
+				
+				@responses[result.status] += 1
+				
+				return result
+			end
+			
+			def print(out = STDOUT)
+				if @samples.any?
+					counts = @responses.sort.collect{|status, count| "#{count}x #{status}"}.join("; ")
+					
+					out.puts "#{@samples.count} samples: #{counts}. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+				end
 			end
 		end
 	end

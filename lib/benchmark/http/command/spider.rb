@@ -38,9 +38,14 @@ module Benchmark
 				
 				self.description = "Spider a website and report on performance."
 				
+				options do
+					option '-d/--depth <count>', "The number of nested URLs to traverse.", default: 10, type: Integer
+					option '-h/--headers', "Print out the response headers", default: false
+				end
+				
 				many :urls, "One or more hosts to benchmark"
 				
-				async def fetch(statistics, client, url, depth = 10, fetched = Set.new)
+				async def fetch(statistics, client, url, depth = @options[:depth], fetched = Set.new)
 					return if fetched.include?(url) or depth == 0
 					
 					fetched << url
@@ -52,15 +57,19 @@ module Benchmark
 					end
 					
 					puts "HEAD #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
+					
 					response.headers.each do |key, value|
-						puts "\t#{key}: #{value.inspect}"
-					end
+						puts "\t#{key}: #{value}"
+					end if @options[:headers]
 					
 					if response.redirection?
 						location = url + response.headers['location']
-						puts "Following redirect to #{location}"
 						if location.host == url.host
+							puts "Following redirect to #{location}..."
 							return fetch(statistics, client, location, depth-1, fetched).wait
+						else
+							puts "Ignoring redirect to #{location}."
+							return nil
 						end
 					end
 					
