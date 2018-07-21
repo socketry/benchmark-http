@@ -51,12 +51,12 @@ module Benchmark
 						client.head(request_uri)
 					end
 					
-					puts "HEAD #{url} -> #{response.version} #{response.status} (#{response.body&.size} bytes)"
+					puts "HEAD #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
 					response.headers.each do |key, value|
-						puts "\t#{key}: #{value}"
+						puts "\t#{key}: #{value.inspect}"
 					end
 					
-					if response.status >= 300 && response.status < 400
+					if response.redirection?
 						location = url + response.headers['location']
 						puts "Following redirect to #{location}"
 						if location.host == url.host
