@@ -181,7 +181,7 @@ module Benchmark
 				if valid?
 					counts = @responses.sort.collect{|status, count| "#{count}x #{status}"}.join("; ")
 					
-					out.puts "#{@samples.count} samples: #{counts}. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+					out.puts "#{@samples.count} samples: #{counts}. #{per_second.round(2)} requests per second. S/D: #{Seconds[standard_deviation]}."
 				else
 					out.puts "Not enough samples."
 				end

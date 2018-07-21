@@ -20,6 +20,85 @@ Install it yourself:
 
 You can run `benchmark-http` is a top level tool for invoking specific benchmarks.
 
+### Spider
+
+This benchmark spiders a website and generates some statistics on general access time.
+
+```shell
+$ benchmark-http spider https://www.oriontransfer.co.nz/welcome/index
+HEAD https://www.oriontransfer.co.nz/welcome/index -> HTTP/2.0 404 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/welcome/index (depth = 10)
+GET https://www.oriontransfer.co.nz/welcome/index -> HTTP/2.0 404 (2263 bytes)
+HEAD https://www.oriontransfer.co.nz/products/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/products/index (depth = 9)
+HEAD https://www.oriontransfer.co.nz/services/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/index (depth = 9)
+HEAD https://www.oriontransfer.co.nz/support/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/support/index (depth = 9)
+HEAD https://www.oriontransfer.co.nz/support/contact-us -> HTTP/2.0 307 (unspecified bytes)
+Following redirect to https://www.oriontransfer.co.nz/support/contact-us/index...
+HEAD https://www.oriontransfer.co.nz/support/terms-of-service -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/support/terms-of-service (depth = 9)
+GET https://www.oriontransfer.co.nz/products/index -> HTTP/2.0 200 (3469 bytes)
+GET https://www.oriontransfer.co.nz/services/index -> HTTP/2.0 200 (2488 bytes)
+GET https://www.oriontransfer.co.nz/support/index -> HTTP/2.0 200 (2246 bytes)
+HEAD https://www.oriontransfer.co.nz/support/contact-us/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/support/contact-us/index (depth = 8)
+GET https://www.oriontransfer.co.nz/support/terms-of-service -> HTTP/2.0 200 (8466 bytes)
+HEAD https://www.oriontransfer.co.nz/products/library-inspector/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/products/library-inspector/index (depth = 8)
+HEAD https://www.oriontransfer.co.nz/products/truth-tables/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/products/truth-tables/index (depth = 8)
+HEAD https://www.oriontransfer.co.nz/products/fingerprint/index -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/products/fingerprint/index (depth = 8)
+HEAD https://www.oriontransfer.co.nz/services/internet-services -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/internet-services (depth = 8)
+HEAD https://www.oriontransfer.co.nz/services/software-development -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/software-development (depth = 8)
+HEAD https://www.oriontransfer.co.nz/services/systems-administration -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/systems-administration (depth = 8)
+HEAD https://www.oriontransfer.co.nz/services/website-development -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/website-development (depth = 8)
+HEAD https://www.oriontransfer.co.nz/support/contact-us/ -> HTTP/2.0 307 (unspecified bytes)
+Following redirect to https://www.oriontransfer.co.nz/support/contact-us/index...
+GET https://www.oriontransfer.co.nz/support/contact-us/index -> HTTP/2.0 200 (3094 bytes)
+GET https://www.oriontransfer.co.nz/products/library-inspector/index -> HTTP/2.0 200 (5592 bytes)
+GET https://www.oriontransfer.co.nz/products/truth-tables/index -> HTTP/2.0 200 (4160 bytes)
+GET https://www.oriontransfer.co.nz/products/fingerprint/index -> HTTP/2.0 200 (4414 bytes)
+GET https://www.oriontransfer.co.nz/services/internet-services -> HTTP/2.0 200 (3362 bytes)
+GET https://www.oriontransfer.co.nz/services/software-development -> HTTP/2.0 200 (3521 bytes)
+GET https://www.oriontransfer.co.nz/services/systems-administration -> HTTP/2.0 200 (2979 bytes)
+GET https://www.oriontransfer.co.nz/services/website-development -> HTTP/2.0 200 (3943 bytes)
+HEAD https://www.oriontransfer.co.nz/_gallery/products/library-inspector/_screenshots/large/Library%20Inspector%20(Libraries).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/library-inspector/_screenshots/large/Library%20Inspector%20(Libraries%20Disassembly).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/library-inspector/_screenshots/large/Library%20Inspector%20(Libraries%20QuickLook).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/library-inspector/_screenshots/large/Library%20Inspector%20(App).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/library-inspector/_screenshots/large/Library%20Inspector%20(App%20Headers).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/truth-tables/_screenshots/large/Reformat%20Expression.png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/truth-tables/_screenshots/large/Large%20Tables.png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/truth-tables/_screenshots/large/Tutor.png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/truth-tables/_screenshots/large/Informative%20Text.png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/fingerprint/_screenshots/large/Fingerprint%20(3).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/fingerprint/_screenshots/large/Fingerprint%20(2).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/_gallery/products/fingerprint/_screenshots/large/Fingerprint%20(1).png -> HTTP/2.0 200 (unspecified bytes)
+Unsupported content type: image/png
+HEAD https://www.oriontransfer.co.nz/services/training -> HTTP/2.0 200 (unspecified bytes)
+GET https://www.oriontransfer.co.nz/services/training (depth = 7)
+GET https://www.oriontransfer.co.nz/services/training -> HTTP/2.0 200 (2994 bytes)
+14 samples: 13x 200; 1x 404. 15.124294695167547 requests per second. S/D: 35.69ms.
+```
+
 ### Concurrency
 
 This benchmark determines the optimal level of concurrency (maximise throughput while keeping latency to a minimum).
