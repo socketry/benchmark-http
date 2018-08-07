@@ -62,7 +62,7 @@ module Benchmark
 					end
 					
 					if @options[:version]
-						puts "benchmark-http v#{Falcon::VERSION}"
+						puts "benchmark-http v#{VERSION}"
 					elsif @options[:help] or @command.nil?
 						print_usage(program_name)
 					else
