@@ -96,7 +96,7 @@ Unsupported content type: image/png
 HEAD https://www.oriontransfer.co.nz/services/training -> HTTP/2.0 200 (unspecified bytes)
 GET https://www.oriontransfer.co.nz/services/training (depth = 7)
 GET https://www.oriontransfer.co.nz/services/training -> HTTP/2.0 200 (2994 bytes)
-14 samples: 13x 200; 1x 404. 15.124294695167547 requests per second. S/D: 35.69ms.
+14 samples: 13x 200; 1x 404. 15.12 requests per second. S/D: 35.69ms.
 ```
 
 ### Concurrency
