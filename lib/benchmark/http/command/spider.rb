@@ -90,7 +90,7 @@ module Benchmark
 					request_uri = url.request_uri
 					
 					response = timeout(10) do
-						client.head(request_uri)
+						client.head(request_uri).tap(&:read)
 					end
 					
 					log("HEAD", url, response)
