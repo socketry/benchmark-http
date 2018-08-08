@@ -129,7 +129,7 @@ module Benchmark
 			ensure
 				@count -= 1
 				
-				if @count == 0
+				if @count == 0 and end_time
 					@total_time += end_time - @start_time
 					@start_time = nil
 				end
