@@ -1,10 +1,6 @@
 language: ruby
-sudo: required
 dist: xenial
 cache: bundler
-
-before_script:
-  - gem update --system
 
 matrix:
   include:
@@ -14,8 +10,6 @@ matrix:
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
-    - rvm: rbx-3
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-3
