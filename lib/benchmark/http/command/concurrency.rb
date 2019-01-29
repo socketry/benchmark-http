@@ -55,7 +55,7 @@ module Benchmark
 							client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
 							
 							statistics.sample(confidence_factor) do
-								response = client.get(request_path)
+								response = client.get(request_path).tap(&:finish)
 							end
 							
 							client.close
