@@ -89,9 +89,7 @@ module Benchmark
 					
 					request_uri = url.request_uri
 					
-					response = timeout(10) do
-						client.head(request_uri).tap(&:read)
-					end
+					response = client.head(request_uri).tap(&:read)
 					
 					log("HEAD", url, response)
 					
@@ -112,10 +110,8 @@ module Benchmark
 						return
 					end
 					
-					response = timeout(20) do
-						statistics.measure do
-							client.get(request_uri)
-						end
+					response = statistics.measure do
+						client.get(request_uri)
 					end
 					
 					log("GET", url, response)
@@ -133,7 +129,7 @@ module Benchmark
 					statistics = Statistics.new
 					
 					@urls.each do |url|
-						endpoint = Async::HTTP::URLEndpoint.parse(url)
+						endpoint = Async::HTTP::URLEndpoint.parse(url, timeout: 10)
 						
 						Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
 							fetch(statistics, client, endpoint.url).wait
