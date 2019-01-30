@@ -45,6 +45,7 @@ module Benchmark
 				end
 				
 				def measure_performance(concurrency, endpoint, request_path)
+					puts
 					puts "I am running #{concurrency} asynchronous tasks that will each make sequential requests..."
 					
 					statistics = Statistics.new(concurrency)
@@ -62,7 +63,8 @@ module Benchmark
 						end
 					end.each(&:wait)
 					
-					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
+					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second.round(2)} asynchronous requests/second."
+					
 					puts "\t          Variance: #{Seconds[statistics.variance]}"
 					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
 					puts "\t    Standard Error: #{statistics.standard_error}"

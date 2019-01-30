@@ -26,8 +26,6 @@ module Benchmark
 			def initialize(concurrency = 0)
 				@samples = []
 				
-				@total_time = 0
-				
 				# The number of currently executing measurements:
 				@count = 0
 				
@@ -37,9 +35,6 @@ module Benchmark
 			
 			# The individual samples' durations.
 			attr :samples
-			
-			# The sequential time of all samples.
-			attr :total_time
 			
 			# The maximum number of executing measurements at any one time.
 			attr :concurrency
@@ -56,8 +51,8 @@ module Benchmark
 				@samples.count
 			end
 			
-			def per_second
-				@samples.count.to_f / total_time.to_f
+			def per_second(duration = self.sequential_duration)
+				@samples.count.to_f / duration.to_f
 			end
 			
 			def latency
@@ -128,15 +123,9 @@ module Benchmark
 				return result
 			ensure
 				@count -= 1
-				
-				if @count == 0 and end_time
-					@total_time += end_time - @start_time
-					@start_time = nil
-				end
 			end
 			
 			def sample(confidence_factor, &block)
-				# warmup
 				yield
 				
 				begin
