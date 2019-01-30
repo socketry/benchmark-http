@@ -36,6 +36,7 @@ module Benchmark
 				options do
 					option '-t/--threshold <factor>', "The acceptable latency penalty when making concurrent requests", default: 1.2, type: Float
 					option '-c/--confidence <factor>', "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
+					option '-m/--minimum <count>', "The minimum number of connections to make", default: 1, type: Integer
 				end
 				
 				many :hosts, "One or more hosts to benchmark"
@@ -80,12 +81,12 @@ module Benchmark
 					
 					Async::Reactor.run do |task|
 						statistics = []
-						minimum = 1
+						minimum = @options[:minimum]
 						
 						base = measure_performance(minimum, endpoint, request_path)
 						statistics << base
 						
-						current = 2
+						current = minimum * 2
 						maximum = nil
 						
 						while statistics.last.concurrency < current
