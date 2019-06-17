@@ -116,7 +116,7 @@ module Benchmark
 					end
 				end
 				
-				def invoke(parent)
+				def call
 					@hosts.each do |host|
 						run(host).wait
 					end

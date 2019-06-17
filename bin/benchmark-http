@@ -23,6 +23,6 @@
 require_relative '../lib/benchmark/http'
 
 begin
-	Benchmark::HTTP::Command.parse(ARGV).invoke
+	Benchmark::HTTP::Command.call
 rescue Interrupt
 end

@@ -125,7 +125,7 @@ module Benchmark
 					Async.logger.error($!)
 				end
 				
-				async def invoke(parent)
+				async def call
 					statistics = Statistics.new
 					
 					@urls.each do |url|

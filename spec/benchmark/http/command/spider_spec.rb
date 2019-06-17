@@ -24,7 +24,7 @@ RSpec.describe Benchmark::HTTP::Command::Spider do
 	let(:parent) {Benchmark::HTTP::Command::Top[]}
 	subject {described_class["--depth", 4, "https://www.codeotaku.com/"]}
 	
-	let(:statistics) {subject.invoke(parent).wait}
+	let(:statistics) {subject.call.wait}
 	
 	it "can spider some pages" do
 		expect(statistics.count).to be > 0

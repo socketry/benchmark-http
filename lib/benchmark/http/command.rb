@@ -27,8 +27,8 @@ require 'samovar'
 module Benchmark
 	module HTTP
 		module Command
-			def self.parse(*args)
-				Top.parse(*args)
+			def self.call(*args)
+				Top.call(*args)
 			end
 			
 			class Top < Samovar::Command
@@ -53,21 +53,21 @@ module Benchmark
 					@options[:logging] == :quiet
 				end
 				
-				def invoke(program_name: File.basename($0))
+				def call
 					if verbose?
-						Async.logger.level = Logger::DEBUG
+						Async.logger.debug!
 					elsif quiet?
-						Async.logger.level = Logger::WARN
+						Async.logger.warn!
 					else
-						Async.logger.level = Logger::INFO
+						Async.logger.info!
 					end
 					
 					if @options[:version]
-						puts "benchmark-http v#{VERSION}"
-					elsif @options[:help] or @command.nil?
-						print_usage(program_name)
+						puts "#{self.name} v#{VERSION}"
+					elsif @options[:help]
+						self.print_usage
 					else
-						@command.invoke(self)
+						@command.call
 					end
 				end
 			end
