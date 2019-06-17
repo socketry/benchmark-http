@@ -40,9 +40,10 @@ module Benchmark
 					option '-v/--version', "Print out the application version."
 				end
 				
-				nested '<command>',
+				nested :command, {
 					'concurrency' => Concurrency,
 					'spider' => Spider
+				}
 				
 				def verbose?
 					@options[:logging] == :verbose

@@ -24,7 +24,7 @@ require_relative '../links_filter'
 
 require 'async'
 require 'async/http/client'
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 require 'async/await'
 
 require 'samovar'
@@ -129,7 +129,7 @@ module Benchmark
 					statistics = Statistics.new
 					
 					@urls.each do |url|
-						endpoint = Async::HTTP::URLEndpoint.parse(url, timeout: 10)
+						endpoint = Async::HTTP::Endpoint.parse(url, timeout: 10)
 						
 						Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
 							fetch(statistics, client, endpoint.url).wait

@@ -23,7 +23,7 @@ require_relative '../statistics'
 
 require 'async'
 require 'async/http/client'
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 
 require 'samovar'
 
@@ -74,7 +74,7 @@ module Benchmark
 				end
 				
 				def run(url)
-					endpoint = Async::HTTP::URLEndpoint.parse(url)
+					endpoint = Async::HTTP::Endpoint.parse(url)
 					request_path = endpoint.url.request_uri
 					
 					puts "I am going to benchmark #{url}..."

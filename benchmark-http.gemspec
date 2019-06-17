@@ -18,12 +18,12 @@ Gem::Specification.new do |spec|
 	spec.required_ruby_version = '~> 2.4'
 
 	spec.add_dependency("async-io", "~> 1.5")
-	spec.add_dependency("async-http", "~> 0.37.13")
+	spec.add_dependency("async-http", "~> 0.45")
 	spec.add_dependency("async-await")
 	
 	spec.add_dependency("trenni-sanitize")
 	
-	spec.add_dependency('samovar', "~> 1.3")
+	spec.add_dependency('samovar', "~> 2.0")
 
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "rake", "~> 10.0"
