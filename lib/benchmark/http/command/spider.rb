@@ -70,6 +70,8 @@ module Benchmark
 					end
 					
 					filter.links.collect do |href|
+						next if href.nil? or href.empty?
+						
 						begin
 							full_url = base + href
 							
