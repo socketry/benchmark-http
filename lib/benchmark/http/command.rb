@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'command/latency'
 require_relative 'command/concurrency'
 require_relative 'command/spider'
 
@@ -41,6 +42,7 @@ module Benchmark
 				end
 				
 				nested :command, {
+					'latency' => Latency,
 					'concurrency' => Concurrency,
 					'spider' => Spider
 				}
