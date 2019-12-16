@@ -48,11 +48,11 @@ module Benchmark
 			end
 			
 			def count
-				@samples.count
+				@samples.size
 			end
 			
 			def per_second(duration = self.sequential_duration)
-				@samples.count.to_f / duration.to_f
+				@samples.size.to_f / duration.to_f
 			end
 			
 			def latency
@@ -67,12 +67,12 @@ module Benchmark
 			
 			def average
 				if @samples.any?
-					@samples.sum / @samples.count
+					@samples.sum / @samples.size
 				end
 			end
 			
 			def valid?
-				@samples.count > 1
+				@samples.size > 1
 			end
 			
 			# Computes Population Variance, σ^2.
@@ -80,7 +80,7 @@ module Benchmark
 				if valid?
 					average = self.average
 					
-					return @samples.map{|n| (n - average)**2}.sum / @samples.count
+					return @samples.map{|n| (n - average)**2}.sum / @samples.size
 				end
 			end
 			
@@ -93,7 +93,7 @@ module Benchmark
 			
 			def standard_error
 				if standard_deviation = self.standard_deviation
-					standard_deviation / Math.sqrt(@samples.count)
+					standard_deviation / Math.sqrt(@samples.size)
 				end
 			end
 			
@@ -135,7 +135,7 @@ module Benchmark
 			
 			def print(out = STDOUT)
 				if self.valid?
-					out.puts "#{@samples.count} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+					out.puts "#{@samples.size} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
 				else
 					out.puts "Not enough samples."
 				end
@@ -144,7 +144,7 @@ module Benchmark
 			private
 			
 			def confident?(factor)
-				if @samples.count > @concurrency
+				if @samples.size > @concurrency
 					return self.standard_error < (self.average * factor)
 				end
 				
@@ -170,7 +170,7 @@ module Benchmark
 				if valid?
 					counts = @responses.sort.collect{|status, count| "#{count}x #{status}"}.join("; ")
 					
-					out.puts "#{@samples.count} samples: #{counts}. #{per_second.round(2)} requests per second. S/D: #{Seconds[standard_deviation]}."
+					out.puts "#{@samples.size} samples: #{counts}. #{per_second.round(2)} requests per second. S/D: #{Seconds[standard_deviation]}."
 				else
 					out.puts "Not enough samples."
 				end

@@ -27,6 +27,6 @@ RSpec.describe Benchmark::HTTP::Command::Spider do
 	let(:statistics) {subject.call.wait}
 	
 	it "can spider some pages" do
-		expect(statistics.count).to be > 0
+		expect(statistics.size).to be > 0
 	end
 end

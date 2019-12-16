@@ -22,7 +22,7 @@ module Benchmark
 	module HTTP
 		class Seconds
 			UNITS = ["s", "ms", "µs"]
-			SCALE = UNITS.count - 1
+			SCALE = UNITS.size - 1
 			
 			def self.[](value)
 				self.new(value)
