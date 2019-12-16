@@ -64,7 +64,7 @@ module Benchmark
 						end
 					end.each(&:wait)
 					
-					puts "I made #{statistics.size} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second.round(2)} asynchronous requests/second."
+					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second.round(2)} asynchronous requests/second."
 					
 					puts "\t          Variance: #{Seconds[statistics.variance]}"
 					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"

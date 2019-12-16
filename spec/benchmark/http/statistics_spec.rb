@@ -37,7 +37,7 @@ RSpec.describe Benchmark::HTTP::Stopwatch do
 		end
 		
 		it "has correct sample count" do
-			expect(subject.size).to be == 8
+			expect(subject.count).to be == 8
 		end
 		
 		it "computes average" do
