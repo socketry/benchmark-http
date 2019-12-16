@@ -144,7 +144,7 @@ module Benchmark
 			private
 			
 			def confident?(factor)
-				if @samples.size > @concurrency
+				if @samples.size > @concurrency * 10
 					return self.standard_error < (self.average * factor)
 				end
 				
