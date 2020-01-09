@@ -18,13 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../seconds'
-require_relative '../statistics'
-require_relative '../links_filter'
+require_relative '../spider'
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
 require 'async/await'
 
 require 'samovar'
@@ -46,97 +41,19 @@ module Benchmark
 				many :urls, "One or more hosts to benchmark"
 				
 				def log(method, url, response)
-					puts "#{method} #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
-					
-					response.headers.each do |key, value|
-						puts "\t#{key}: #{value}"
-					end if @options[:headers]
-				end
-				
-				def extract_links(url, response)
-					base = url
-					
-					body = response.read
-					
-					begin
-						filter = LinksFilter.parse(body)
-					rescue
-						Async.logger.error($!)
-						return []
-					end
-					
-					if filter.base
-						base = base + filter.base
-					end
-					
-					filter.links.collect do |href|
-						next if href.nil? or href.empty?
+					Async.logger.call(self, severity: (response.failure? ? :warn : :info)) do |buffer|
+						buffer.puts "#{method} #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
 						
-						begin
-							full_url = base + href
-							
-							if full_url.host == url.host && full_url.kind_of?(URI::HTTP)
-								yield full_url
-							end
-						rescue ArgumentError, URI::InvalidURIError
-							puts "Could not fetch #{href}, relative to #{base}."
-						end
-					end.compact
+						response.headers.each do |key, value|
+							buffer.puts "\t#{key}: #{value}"
+						end if @options[:headers]
+					end
 				end
 				
-				async def fetch(statistics, client, url, depth = @options[:depth], fetched = Set.new)
-					return if fetched.include?(url) or depth == 0
+				sync def call
+					spider = HTTP::Spider.new(depth: @options[:depth])
 					
-					fetched << url
-					
-					request_uri = url.request_uri
-					
-					response = client.head(request_uri).tap(&:read)
-					
-					log("HEAD", url, response)
-					
-					if response.redirection?
-						location = url + response.headers['location']
-						if location.host == url.host
-							puts "Following redirect to #{location}..."
-							return fetch(statistics, client, location, depth-1, fetched).wait
-						else
-							puts "Ignoring redirect to #{location}."
-							return
-						end
-					end
-					
-					content_type = response.headers['content-type']
-					unless content_type&.start_with? 'text/html'
-						puts "Unsupported content type: #{content_type}"
-						return
-					end
-					
-					response = statistics.measure do
-						client.get(request_uri)
-					end
-					
-					log("GET", url, response)
-					
-					extract_links(url, response) do |href|
-						fetch(statistics, client, href, depth - 1, fetched)
-					end.each(&:wait)
-				rescue Async::TimeoutError
-					Async.logger.error("Timeout while fetching #{url}")
-				rescue StandardError
-					Async.logger.error($!)
-				end
-				
-				async def call
-					statistics = Statistics.new
-					
-					@urls.each do |url|
-						endpoint = Async::HTTP::Endpoint.parse(url, timeout: 10)
-						
-						Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
-							fetch(statistics, client, endpoint.url).wait
-						end
-					end
+					statistics = spider.call(@urls, &self.method(:log))
 					
 					statistics.print
 					
