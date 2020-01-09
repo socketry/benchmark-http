@@ -160,6 +160,12 @@ module Benchmark
 				@responses = Hash.new{|h,k| 0}
 			end
 			
+			attr :responses
+			
+			def failed
+				@responses.sum{|status, count| status >= 400 ? count : 0}
+			end
+			
 			def add(duration, result)
 				super
 				
