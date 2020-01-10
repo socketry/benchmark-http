@@ -21,13 +21,15 @@
 require 'benchmark/http/statistics'
 
 RSpec.describe Benchmark::HTTP::Stopwatch do
-	context "no samples" do
+	context "with no samples" do
+		it {is_expected.to_not be_valid}
+		
 		it "should have no average" do
 			expect(subject.average).to be_nil
 		end
 	end
 	
-	context "some samples" do
+	context "with some samples" do
 		let(:samples) {[2, 4, 4, 4, 5, 5, 7, 9]}
 		
 		before(:each) do
@@ -35,6 +37,8 @@ RSpec.describe Benchmark::HTTP::Stopwatch do
 				subject.add(value)
 			end
 		end
+		
+		it {is_expected.to be_valid}
 		
 		it "has correct sample count" do
 			expect(subject.count).to be == 8

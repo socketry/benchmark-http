@@ -72,7 +72,7 @@ module Benchmark
 			end
 			
 			def valid?
-				@samples.size > 1
+				@samples.size > 0
 			end
 			
 			# Computes Population Variance, σ^2.
