@@ -71,7 +71,12 @@ module Benchmark
 			end
 			
 			async def fetch(statistics, client, url, depth = @depth, fetched = Set.new, &block)
-				return if fetched.include?(url) or depth == 0
+				if depth.zero?
+					Async.logger.warn(self) {"Exceeded depth while trying to visit #{url}!"}
+					return
+				elsif fetched.include?(url)
+					return
+				end
 				
 				fetched << url
 				
@@ -84,11 +89,11 @@ module Benchmark
 				if response.redirection?
 					location = url + response.headers['location']
 					if location.host == url.host
-						Async.logger.info(self) {"Following redirect to #{location}..."}
+						Async.logger.debug(self) {"Following redirect to #{location}..."}
 						fetch(statistics, client, location, depth-1, fetched, &block).wait
 						return
 					else
-						Async.logger.info(self) {"Ignoring redirect to #{location}."}
+						Async.logger.debug(self) {"Ignoring redirect to #{location}."}
 						return
 					end
 				end
