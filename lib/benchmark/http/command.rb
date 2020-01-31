@@ -21,6 +21,7 @@
 require_relative 'command/latency'
 require_relative 'command/concurrency'
 require_relative 'command/spider'
+require_relative 'command/hammer'
 
 require_relative 'version'
 require 'samovar'
@@ -44,7 +45,8 @@ module Benchmark
 				nested :command, {
 					'latency' => Latency,
 					'concurrency' => Concurrency,
-					'spider' => Spider
+					'spider' => Spider,
+					'hammer' => Hammer,
 				}
 				
 				def verbose?
