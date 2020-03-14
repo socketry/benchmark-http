@@ -24,7 +24,9 @@ Gem::Specification.new do |spec|
 	spec.add_dependency("trenni-sanitize")
 	
 	spec.add_dependency('samovar', "~> 2.0")
-
+	
+	spec.add_development_dependency "covered"
+	spec.add_development_dependency "async-rspec"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "rake", "~> 10.0"
 	spec.add_development_dependency "rspec", "~> 3.0"

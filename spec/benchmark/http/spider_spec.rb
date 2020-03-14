@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Copyright, 2020, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,18 +18,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'bundler/setup'
-require 'covered/rspec'
-require 'async/rspec'
+require 'benchmark/http/command'
 
-RSpec.configure do |config|
-	# Enable flags like --only-failures and --next-failure
-	config.example_status_persistence_file_path = ".rspec_status"
+RSpec.describe Benchmark::HTTP::Spider do
+	let(:statistics) {subject.call(["https://www.codeotaku.com/"])}
 	
-	# Disable RSpec exposing methods globally on `Module` and `main`
-	config.disable_monkey_patching!
+	it "can spider some pages" do
+		expect(statistics.count).to be > 0
+	end
 	
-	config.expect_with :rspec do |c|
-		c.syntax = :expect
+	context "ignore everything" do
+		subject{described_class.new(ignore: //)}
+		
+		it "ignores all pages" do
+			expect(statistics.count).to be_zero
+		end
 	end
 end

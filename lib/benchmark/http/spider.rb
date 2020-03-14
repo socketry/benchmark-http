@@ -34,8 +34,9 @@ module Benchmark
 		class Spider
 			include Async::Await
 			
-			def initialize(depth: nil)
+			def initialize(depth: nil, ignore: nil)
 				@depth = depth
+				@ignore = ignore
 			end
 			
 			def extract_links(url, response)
@@ -71,10 +72,12 @@ module Benchmark
 			end
 			
 			async def fetch(statistics, client, url, depth = @depth, fetched = Set.new, &block)
-				if depth.zero?
+				if depth&.zero?
 					Async.logger.warn(self) {"Exceeded depth while trying to visit #{url}!"}
 					return
 				elsif fetched.include?(url)
+					return
+				elsif @ignore&.match?(url.path)
 					return
 				end
 				
@@ -90,7 +93,7 @@ module Benchmark
 					location = url + response.headers['location']
 					if location.host == url.host
 						Async.logger.debug(self) {"Following redirect to #{location}..."}
-						fetch(statistics, client, location, depth-1, fetched, &block).wait
+						fetch(statistics, client, location, depth&.-(1), fetched, &block).wait
 						return
 					else
 						Async.logger.debug(self) {"Ignoring redirect to #{location}."}
