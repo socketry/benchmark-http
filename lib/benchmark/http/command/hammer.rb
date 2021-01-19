@@ -36,6 +36,8 @@ module Benchmark
 				options do
 					option "-k/--concurrency <count>", "The number of simultaneous connections to make.", default: 1, type: Integer
 					option '-c/--count <integer>', "The number of requests to make per connection.", default: 10_000, type: Integer
+					
+					option '-i/--interval <integer>', "The time to wait between measurements.", default: nil, type: Integer
 				end
 				
 				many :urls, "The urls to hammer."
@@ -56,7 +58,7 @@ module Benchmark
 					
 					concurrency.times.map do
 						task.async do
-							client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
+							client = Async::HTTP::Client.new(endpoint, protocol: endpoint.protocol)
 							
 							count.times do |i|
 								statistics.measure do
@@ -86,7 +88,7 @@ module Benchmark
 					
 					puts "I am going to benchmark #{url}..."
 					
-					Async::Reactor.run do |task|
+					Async do |task|
 						statistics = []
 						
 						base = measure_performance(@options[:concurrency], @options[:count], endpoint, request_path)
@@ -94,8 +96,16 @@ module Benchmark
 				end
 				
 				def call
-					@urls.each do |url|
-						run(url).wait
+					while true
+						@urls.each do |url|
+							run(url).wait
+						end
+						
+						if @interval
+							sleep(@interval)
+						else
+							break
+						end
 					end
 				end
 			end
