@@ -1,20 +1,14 @@
 # Benchmark::HTTP
 
-An asynchronous HTTP benchmark tool built on top of [async], [async-io] and [async-http]. Useful for analysing server performance. Supports HTTP1 and HTTP2.
+An asynchronous HTTP benchmark tool built on top of [async](https://github.com/socketry/async), [async-io](https://github.com/socketry/async-io) and [async-http](https://github.com/socketry/async-http). Useful for analysing server performance. Supports HTTP1 and HTTP2.
 
-[![Build Status](https://secure.travis-ci.org/socketry/benchmark-http.svg)](http://travis-ci.org/socketry/benchmark-http)
-[![Code Climate](https://codeclimate.com/github/socketry/benchmark-http.svg)](https://codeclimate.com/github/socketry/benchmark-http)
-[![Coverage Status](https://coveralls.io/repos/socketry/benchmark-http/badge.svg)](https://coveralls.io/r/socketry/benchmark-http)
-
-[async]: https://github.com/socketry/async
-[async-io]: https://github.com/socketry/async-io
-[async-http]: https://github.com/socketry/async-http
+[![Development Status](https://github.com/socketry/benchmark-http/workflows/Development/badge.svg)](https://github.com/socketry/benchmark-http/actions?workflow=Development)
 
 ## Installation
 
 Install it yourself:
 
-	$ gem install benchmark-http
+    $ gem install benchmark-http
 
 ## Usage
 
@@ -24,7 +18,7 @@ You can run `benchmark-http` is a top level tool for invoking specific benchmark
 
 This benchmark spiders a website and generates some statistics on general access time.
 
-```shell
+``` shell
 $ benchmark-http spider https://www.oriontransfer.co.nz/welcome/index
 HEAD https://www.oriontransfer.co.nz/welcome/index -> HTTP/2.0 404 (unspecified bytes)
 GET https://www.oriontransfer.co.nz/welcome/index (depth = 10)
@@ -103,7 +97,7 @@ GET https://www.oriontransfer.co.nz/services/training -> HTTP/2.0 200 (2994 byte
 
 This benchmark determines the optimal level of concurrency (maximise throughput while keeping latency to a minimum).
 
-```shell
+``` shell
 $ benchmark-http concurrency https://www.oriontransfer.co.nz/welcome/index
 I am going to benchmark https://www.oriontransfer.co.nz/welcome/index...
 I am running 1 asynchronous tasks that will each make sequential requests...
@@ -192,11 +186,11 @@ At this level of concurrency, requests have ~1.13x higher latency.
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1.  Fork it
+2.  Create your feature branch (`git checkout -b my-new-feature`)
+3.  Commit your changes (`git commit -am 'Add some feature'`)
+4.  Push to the branch (`git push origin my-new-feature`)
+5.  Create new Pull Request
 
 ## License
 

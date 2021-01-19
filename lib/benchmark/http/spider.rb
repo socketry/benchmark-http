@@ -114,7 +114,7 @@ module Benchmark
 				yield("GET", url, response) if block_given?
 				
 				extract_links(url, response) do |href|
-					fetch(statistics, client, href, depth - 1, fetched, &block)
+					fetch(statistics, client, href, depth&.-(1), fetched, &block)
 				end.each(&:wait)
 			rescue Async::TimeoutError
 				Async.logger.error(self) {"Timeout while fetching #{url}"}
@@ -128,7 +128,7 @@ module Benchmark
 				urls.each do |url|
 					endpoint = Async::HTTP::Endpoint.parse(url, timeout: 10)
 					
-					Async::HTTP::Client.open(endpoint, endpoint.protocol, connection_limit: 4) do |client|
+					Async::HTTP::Client.open(endpoint, protocol: endpoint.protocol, connection_limit: 4) do |client|
 						fetch(statistics, client, endpoint.url, &block).wait
 					end
 				end
