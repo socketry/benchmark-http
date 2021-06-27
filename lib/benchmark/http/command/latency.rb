@@ -52,7 +52,7 @@ module Benchmark
 					
 					concurrency.times.map do
 						task.async do
-							client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
+							client = Async::HTTP::Client.new(endpoint, protocol: endpoint.protocol)
 							
 							statistics.sample(confidence_factor) do
 								response = client.get(request_path).tap(&:finish)
