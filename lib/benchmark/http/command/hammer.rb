@@ -38,6 +38,7 @@ module Benchmark
 					option '-c/--count <integer>', "The number of requests to make per connection.", default: 10_000, type: Integer
 					
 					option '-i/--interval <integer>', "The time to wait between measurements.", default: nil, type: Integer
+					option '--alpn-protocols <name,name>', "Force specific ALPN protocols during connection negotiation.", default: nil, type: String
 				end
 				
 				many :urls, "The urls to hammer."
@@ -82,8 +83,12 @@ module Benchmark
 					return statistics
 				end
 				
+				def alpn_protocols
+					@options[:alpn_protocols]&.split(',')
+				end
+				
 				def run(url)
-					endpoint = Async::HTTP::Endpoint.parse(url)
+					endpoint = Async::HTTP::Endpoint.parse(url, alpn_protocols: self.alpn_protocols)
 					request_path = endpoint.url.request_uri
 					
 					puts "I am going to benchmark #{url}..."
