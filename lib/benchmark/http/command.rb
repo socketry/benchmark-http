@@ -25,6 +25,7 @@ require_relative 'command/hammer'
 
 require_relative 'version'
 require 'samovar'
+require 'console'
 
 module Benchmark
 	module HTTP
@@ -59,11 +60,11 @@ module Benchmark
 				
 				def call
 					if verbose?
-						Async.logger.debug!
+						Console.logger.debug!
 					elsif quiet?
-						Async.logger.warn!
+						Console.logger.warn!
 					else
-						Async.logger.info!
+						Console.logger.info!
 					end
 					
 					if @options[:version]

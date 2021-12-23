@@ -28,6 +28,7 @@ require 'async/http/endpoint'
 require 'async/await'
 
 require 'uri'
+require 'console'
 
 module Benchmark
 	module HTTP
@@ -47,7 +48,7 @@ module Benchmark
 				begin
 					filter = LinksFilter.parse(body)
 				rescue
-					Async.logger.error(self) {$!}
+					Console.logger.error(self) {$!}
 					return []
 				end
 				
@@ -65,7 +66,7 @@ module Benchmark
 							yield full_url
 						end
 					rescue ArgumentError, URI::InvalidURIError
-						Async.logger.warn(self) {"Could not fetch #{href}, relative to #{base}!"}
+						Console.logger.warn(self) {"Could not fetch #{href}, relative to #{base}!"}
 						next # Don't accumulate an item into the resulting array.
 					end
 				end.compact
@@ -73,7 +74,7 @@ module Benchmark
 			
 			async def fetch(statistics, client, url, depth = @depth, fetched = Set.new, &block)
 				if depth&.zero?
-					Async.logger.warn(self) {"Exceeded depth while trying to visit #{url}!"}
+					Console.logger.warn(self) {"Exceeded depth while trying to visit #{url}!"}
 					return
 				elsif fetched.include?(url)
 					return
@@ -92,11 +93,11 @@ module Benchmark
 				if response.redirection?
 					location = url + response.headers['location']
 					if location.host == url.host
-						Async.logger.debug(self) {"Following redirect to #{location}..."}
+						Console.logger.debug(self) {"Following redirect to #{location}..."}
 						fetch(statistics, client, location, depth&.-(1), fetched, &block).wait
 						return
 					else
-						Async.logger.debug(self) {"Ignoring redirect to #{location}."}
+						Console.logger.debug(self) {"Ignoring redirect to #{location}."}
 						return
 					end
 				end
@@ -117,9 +118,9 @@ module Benchmark
 					fetch(statistics, client, href, depth&.-(1), fetched, &block)
 				end.each(&:wait)
 			rescue Async::TimeoutError
-				Async.logger.error(self) {"Timeout while fetching #{url}"}
+				Console.logger.error(self) {"Timeout while fetching #{url}"}
 			rescue StandardError
-				Async.logger.error(self) {$!}
+				Console.logger.error(self) {$!}
 			end
 			
 			sync def call(urls, &block)

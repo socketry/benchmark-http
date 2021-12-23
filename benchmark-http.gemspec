@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "async-io", "~> 1.5"
 	spec.add_dependency "samovar", "~> 2.0"
 	spec.add_dependency "trenni-sanitize"
+	spec.add_dependency "console"
 	
 	spec.add_development_dependency "async-rspec"
 	spec.add_development_dependency "bundler"
