@@ -31,6 +31,6 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "async-rspec"
 	spec.add_development_dependency "bake-test"
 	spec.add_development_dependency "bundler"
-	spec.add_development_dependency "covered"
+	spec.add_development_dependency "covered", "~> 0.16"
 	spec.add_development_dependency "sus", "~> 0.12"
 end
