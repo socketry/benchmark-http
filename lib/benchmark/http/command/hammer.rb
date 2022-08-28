@@ -29,7 +29,7 @@ module Benchmark
 				many :urls, "The urls to hammer."
 				
 				def measure_performance(concurrency, count, endpoint, request_path)
-					puts "I am running #{concurrency} asynchronous tasks that will each make #{count} sequential requests..."
+					Console.logger.info(self) {"I am running #{concurrency} asynchronous tasks that will each make #{count} sequential requests..."}
 					
 					statistics = Statistics.new(concurrency)
 					task = Async::Task.current
@@ -38,7 +38,7 @@ module Benchmark
 					progress_task = task.async do |child|
 						while true
 							child.sleep(1)
-							statistics.print
+							Console.logger.info(self, statistics)
 						end
 					end
 					
@@ -58,12 +58,13 @@ module Benchmark
 					
 					progress_task&.stop
 					
-					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
-					puts "\t          Variance: #{Seconds[statistics.variance]}"
-					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
-					puts "\t    Standard Error: #{Seconds[statistics.standard_error]}"
-					
-					statistics.print
+					Console.logger.info(self) do |buffer|
+						buffer.puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
+						buffer.puts "\t          Variance: #{Seconds[statistics.variance]}"
+						buffer.puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
+						buffer.puts "\t    Standard Error: #{Seconds[statistics.standard_error]}"
+						buffer.puts statistics
+					end
 					
 					return statistics
 				end
@@ -76,9 +77,9 @@ module Benchmark
 					endpoint = Async::HTTP::Endpoint.parse(url, alpn_protocols: self.alpn_protocols)
 					request_path = endpoint.url.request_uri
 					
-					puts "I am going to benchmark #{url}..."
+					Console.logger.info(self) {"I am going to benchmark #{url}..."}
 					
-					Async do |task|
+					Sync do |task|
 						statistics = []
 						
 						base = measure_performance(@options[:concurrency], @options[:count], endpoint, request_path)
@@ -88,7 +89,7 @@ module Benchmark
 				def call
 					while true
 						@urls.each do |url|
-							run(url).wait
+							run(url)
 						end
 						
 						if @interval

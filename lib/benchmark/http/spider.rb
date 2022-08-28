@@ -102,10 +102,10 @@ module Benchmark
 				extract_links(url, response) do |href|
 					fetch(statistics, client, href, depth&.-(1), fetched, &block)
 				end.each(&:wait)
-			rescue Async::TimeoutError
-				Console.logger.error(self) {"Timeout while fetching #{url}"}
-			rescue StandardError
-				Console.logger.error(self) {$!}
+			rescue Async::TimeoutError => error
+				Console.logger.error(self, error, url: url)
+			rescue StandardError => error
+				Console.logger.error(self, error)
 			end
 			
 			sync def call(urls, &block)

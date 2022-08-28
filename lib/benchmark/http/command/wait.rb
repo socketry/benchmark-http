@@ -46,7 +46,7 @@ module Benchmark
 							end
 						end
 						
-						puts "#{url} is ready after #{clock.total} seconds."
+						Console.logger.info(self) {"#{url} is ready after #{clock.total} seconds."}
 					ensure
 						client.close
 					end

@@ -30,7 +30,7 @@ module Benchmark
 				end
 				
 				def measure_performance(concurrency, endpoint, request_path)
-					puts "I am running #{concurrency} asynchronous tasks that will each make sequential requests..."
+					Console.logger.info(self) {"I am running #{concurrency} asynchronous tasks that will each make sequential requests..."}
 					
 					statistics = Statistics.new(concurrency)
 					task = Async::Task.current
@@ -47,10 +47,12 @@ module Benchmark
 						end
 					end.each(&:wait)
 					
-					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
-					puts "\t          Variance: #{Seconds[statistics.variance]}"
-					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
-					puts "\t    Standard Error: #{Seconds[statistics.standard_error]}"
+					Console.logger.info(self, statistics: statistics) do |buffer|
+						buffer.puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second} asynchronous requests/second."
+						buffer.puts "\t          Variance: #{Seconds[statistics.variance]}"
+						buffer.puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
+						buffer.puts "\t    Standard Error: #{Seconds[statistics.standard_error]}"
+					end
 					
 					return statistics
 				end
@@ -59,9 +61,9 @@ module Benchmark
 					endpoint = Async::HTTP::Endpoint.parse(url)
 					request_path = endpoint.url.request_uri
 					
-					puts "I am going to benchmark #{url}..."
+					Console.logger.info(self) {"I am going to benchmark #{url}..."}
 					
-					Async::Reactor.run do |task|
+					Sync do |task|
 						statistics = []
 						
 						base = measure_performance(@options[:concurrency], endpoint, request_path)
@@ -70,7 +72,7 @@ module Benchmark
 				
 				def call
 					@hosts.each do |host|
-						run(host).wait
+						run(host)
 					end
 				end
 			end

@@ -27,7 +27,7 @@ module Benchmark
 				many :urls, "One or more hosts to benchmark"
 				
 				def log(method, url, response)
-					Console.logger.call(self, severity: (response.failure? ? :warn : :info)) do |buffer|
+					Console.logger.public_send(response.failure? ? :warn : :info, self) do |buffer|
 						buffer.puts "#{method} #{url} -> #{response.version} #{response.status} (#{response.body&.length || 'unspecified'} bytes)"
 						
 						response.headers.each do |key, value|
@@ -41,7 +41,7 @@ module Benchmark
 					
 					statistics = spider.call(@urls, &self.method(:log))
 					
-					statistics.print
+					Console.logger.info(self, statistics: statistics)
 					
 					return statistics
 				end

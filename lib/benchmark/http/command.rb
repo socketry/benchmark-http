@@ -50,8 +50,6 @@ module Benchmark
 						Console.logger.debug!
 					elsif quiet?
 						Console.logger.warn!
-					else
-						Console.logger.info!
 					end
 					
 					if @options[:version]

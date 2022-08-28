@@ -118,12 +118,25 @@ module Benchmark
 				end until confident?(confidence_factor)
 			end
 			
-			def print(out = STDOUT)
+			def to_s
 				if self.valid?
-					out.puts "#{@samples.size} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
+					"#{@samples.size} samples. #{per_second} requests per second. S/D: #{Seconds[standard_deviation]}."
 				else
-					out.puts "Not enough samples."
+					"Not enough samples."
 				end
+			end
+			
+			def to_json(options)
+				{
+					count: self.count,
+					concurrency: self.concurrency,
+					latency: self.latency,
+					standard_deviation: self.standard_deviation,
+					standard_error: self.standard_error,
+					per_second: self.per_second,
+					duration: self.duration,
+					variance: self.variance,
+				}.to_json(options)
 			end
 			
 			private

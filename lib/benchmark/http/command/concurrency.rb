@@ -31,8 +31,7 @@ module Benchmark
 				end
 				
 				def measure_performance(concurrency, endpoint, request_path)
-					puts
-					puts "I am running #{concurrency} asynchronous tasks that will each make sequential requests..."
+					Console.logger.info(self, url: endpoint.url) {"I am running #{concurrency} asynchronous tasks that will each make sequential requests..."}
 					
 					statistics = Statistics.new(concurrency)
 					task = Async::Task.current
@@ -49,11 +48,13 @@ module Benchmark
 						end
 					end.each(&:wait)
 					
-					puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second.round(2)} asynchronous requests/second."
+					Console.logger.info(self, url: endpoint.url, concurrency: concurrency, statistics: statistics) do |buffer|
+						buffer.puts "I made #{statistics.count} requests in #{Seconds[statistics.sequential_duration]}. The per-request latency was #{Seconds[statistics.latency]}. That's #{statistics.per_second.round(2)} asynchronous requests/second."
 					
-					puts "\t          Variance: #{Seconds[statistics.variance]}"
-					puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
-					puts "\t    Standard Error: #{statistics.standard_error}"
+						buffer.puts "\t          Variance: #{Seconds[statistics.variance]}"
+						buffer.puts "\tStandard Deviation: #{Seconds[statistics.standard_deviation]}"
+						buffer.puts "\t    Standard Error: #{statistics.standard_error}"
+					end
 					
 					return statistics
 				end
@@ -62,9 +63,9 @@ module Benchmark
 					endpoint = Async::HTTP::Endpoint.parse(url)
 					request_path = endpoint.url.request_uri
 					
-					puts "I am going to benchmark #{url}..."
+					Console.logger.info(self) {"I am going to benchmark #{url}..."}
 					
-					Async::Reactor.run do |task|
+					Sync do |task|
 						statistics = []
 						minimum = @options[:minimum]
 						
@@ -95,15 +96,16 @@ module Benchmark
 							end
 						end
 						
-						puts "Your server can handle #{statistics.last.concurrency} concurrent requests."
-						
-						puts "At this level of concurrency, requests have ~#{(statistics.last.latency / statistics.first.latency).round(2)}x higher latency."
+						Console.logger.info(self) do |buffer|
+							buffer.puts "Your server can handle #{statistics.last.concurrency} concurrent requests."
+							buffer.puts "At this level of concurrency, requests have ~#{(statistics.last.latency / statistics.first.latency).round(2)}x higher latency."
+						end
 					end
 				end
 				
 				def call
 					@hosts.each do |host|
-						run(host).wait
+						run(host)
 					end
 				end
 			end
