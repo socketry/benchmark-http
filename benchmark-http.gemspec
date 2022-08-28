@@ -7,12 +7,15 @@ Gem::Specification.new do |spec|
 	spec.version = Benchmark::HTTP::VERSION
 	
 	spec.summary = "An asynchronous benchmark toolbox for modern HTTP servers."
-	spec.authors = ["Samuel Williams"]
+	spec.authors = ["Samuel Williams", "Olle Jonsson"]
 	spec.license = "MIT"
+	
+	spec.cert_chain  = ['release.cert']
+	spec.signing_key = File.expand_path('~/.gem/release.pem')
 	
 	spec.homepage = "https://github.com/socketry/benchmark-http"
 	
-	spec.files = Dir.glob('{bin,lib}/**/*', File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(['{bin,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["benchmark-http"]
 	
@@ -26,6 +29,8 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "trenni-sanitize"
 	
 	spec.add_development_dependency "async-rspec"
+	spec.add_development_dependency "bake-test"
+	spec.add_development_dependency "bake-test-external"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "covered"
 	spec.add_development_dependency "rake", "~> 10.0"
