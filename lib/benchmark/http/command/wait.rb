@@ -18,63 +18,64 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'command/latency'
-require_relative 'command/concurrency'
-require_relative 'command/spider'
-require_relative 'command/hammer'
-require_relative 'command/wait'
+require_relative '../seconds'
+require_relative '../statistics'
 
-require_relative 'version'
+require 'async'
+require 'async/barrier'
+require 'async/http/client'
+require 'async/http/endpoint'
+
 require 'samovar'
-require 'console'
 
 module Benchmark
 	module HTTP
 		module Command
-			def self.call(*args)
-				Top.call(*args)
-			end
-			
-			class Top < Samovar::Command
-				self.description = "An asynchronous HTTP server benchmark."
+			class Wait < Samovar::Command
+				self.description = "Measure how long it takes for an endpoint to become accessible."
 				
 				options do
-					option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-					option '-h/--help', "Print out help information."
-					option '-v/--version', "Print out the application version."
+					option '-w/--wait <time>', "The maximum wait time.", default: 10, type: Float
 				end
 				
-				nested :command, {
-					'latency' => Latency,
-					'concurrency' => Concurrency,
-					'spider' => Spider,
-					'hammer' => Hammer,
-					'wait' => Wait,
-				}
+				many :hosts, "The hosts to wait for."
 				
-				def verbose?
-					@options[:logging] == :verbose
-				end
-				
-				def quiet?
-					@options[:logging] == :quiet
+				def run(url, parent: Async::Task.current)
+					endpoint = Async::HTTP::Endpoint.parse(url)
+					request_path = endpoint.url.request_uri
+					maximum_wait = @options[:wait]
+					
+					parent.async do
+						clock = Async::Clock.start
+						
+						client = Async::HTTP::Client.new(endpoint)
+						
+						begin
+							client.get(request_path).tap(&:finish)
+						rescue => error
+							if clock.total > maximum_wait
+								raise
+							else
+								sleep 0.01
+								retry
+							end
+						end
+						
+						puts "#{url} is ready after #{clock.total} seconds."
+					ensure
+						client.close
+					end
 				end
 				
 				def call
-					if verbose?
-						Console.logger.debug!
-					elsif quiet?
-						Console.logger.warn!
-					else
-						Console.logger.info!
-					end
-					
-					if @options[:version]
-						puts "#{self.name} v#{VERSION}"
-					elsif @options[:help]
-						self.print_usage
-					else
-						@command.call
+					Sync do |task|
+						barrier = Async::Barrier.new
+						
+						@hosts.each do |host|
+							run(host, parent: barrier)
+						end
+						
+						barrier.wait
 					end
 				end
 			end
