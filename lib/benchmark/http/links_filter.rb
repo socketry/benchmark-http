@@ -21,7 +21,7 @@ module Benchmark
 			def filter(node)
 				if node.name == 'base'
 					@base = node['href']
-				elsif node.name == 'a'
+				elsif node.name == 'a' and node['href'] and node['rel'] != 'nofollow'
 					@links << node['href']
 				end
 				
