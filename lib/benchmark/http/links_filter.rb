@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2018-2022, by Samuel Williams.
 
-require 'trenni/sanitize'
+require 'xrb/sanitize'
 
 module Benchmark
 	module HTTP
-		class LinksFilter < Trenni::Sanitize::Filter
+		class LinksFilter < XRB::Sanitize::Filter
 			def initialize(*)
 				super
 				
