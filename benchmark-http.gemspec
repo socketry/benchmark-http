@@ -15,11 +15,16 @@ Gem::Specification.new do |spec|
 	
 	spec.homepage = "https://github.com/socketry/benchmark-http"
 	
+	spec.metadata = {
+		"documentation_uri" => "https://socketry.github.io/benchmark-http/",
+		"source_code_uri" => "https://github.com/socketry/benchmark-http.git",
+	}
+	
 	spec.files = Dir.glob(['{bin,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["benchmark-http"]
 	
-	spec.required_ruby_version = ">= 2.4"
+	spec.required_ruby_version = ">= 3.1"
 	
 	spec.add_dependency "async-await"
 	spec.add_dependency "async-http", "~> 0.54"
@@ -27,10 +32,4 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "console"
 	spec.add_dependency "samovar", "~> 2.0"
 	spec.add_dependency "xrb-sanitize"
-	
-	spec.add_development_dependency "async-rspec"
-	spec.add_development_dependency "bake-test"
-	spec.add_development_dependency "bundler"
-	spec.add_development_dependency "covered", "~> 0.16"
-	spec.add_development_dependency "sus", "~> 0.12"
 end

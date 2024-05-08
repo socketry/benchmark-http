@@ -4,4 +4,4 @@
 /.covered.db
 /external
 
-/.rspec*
+/.github/workflows/test-external.yaml
