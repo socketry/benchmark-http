@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2022, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require_relative '../seconds'
-require_relative '../statistics'
+require_relative "../seconds"
+require_relative "../statistics"
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
+require "async"
+require "async/http/client"
+require "async/http/endpoint"
 
-require 'samovar'
+require "samovar"
 
 module Benchmark
 	module HTTP
@@ -20,10 +20,10 @@ module Benchmark
 				
 				options do
 					option "-k/--concurrency <count>", "The number of simultaneous connections to make.", default: 1, type: Integer
-					option '-c/--count <integer>', "The number of requests to make per connection.", default: 10_000, type: Integer
+					option "-c/--count <integer>", "The number of requests to make per connection.", default: 10_000, type: Integer
 					
-					option '-i/--interval <integer>', "The time to wait between measurements.", default: nil, type: Integer
-					option '--alpn-protocols <name,name>', "Force specific ALPN protocols during connection negotiation.", default: nil, type: String
+					option "-i/--interval <integer>", "The time to wait between measurements.", default: nil, type: Integer
+					option "--alpn-protocols <name,name>", "Force specific ALPN protocols during connection negotiation.", default: nil, type: String
 				end
 				
 				many :urls, "The urls to hammer."
@@ -70,7 +70,7 @@ module Benchmark
 				end
 				
 				def alpn_protocols
-					@options[:alpn_protocols]&.split(',')
+					@options[:alpn_protocols]&.split(",")
 				end
 				
 				def run(url)

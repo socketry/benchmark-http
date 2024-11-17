@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
-require_relative '../seconds'
-require_relative '../statistics'
+require_relative "../seconds"
+require_relative "../statistics"
 
-require 'async'
-require 'async/barrier'
-require 'async/http/client'
-require 'async/http/endpoint'
+require "async"
+require "async/barrier"
+require "async/http/client"
+require "async/http/endpoint"
 
-require 'samovar'
+require "samovar"
 
 module Benchmark
 	module HTTP
@@ -20,7 +20,7 @@ module Benchmark
 				self.description = "Measure how long it takes for an endpoint to become accessible."
 				
 				options do
-					option '-w/--wait <time>', "The maximum wait time.", default: 10, type: Float
+					option "-w/--wait <time>", "The maximum wait time.", default: 10, type: Float
 				end
 				
 				many :hosts, "The hosts to wait for."

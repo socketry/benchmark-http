@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2022, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require_relative 'seconds'
-require_relative 'statistics'
-require_relative 'links_filter'
+require_relative "seconds"
+require_relative "statistics"
+require_relative "links_filter"
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
-require 'async/await'
+require "async"
+require "async/http/client"
+require "async/http/endpoint"
+require "async/await"
 
-require 'uri'
-require 'console'
+require "uri"
+require "console"
 
 module Benchmark
 	module HTTP
@@ -76,7 +76,7 @@ module Benchmark
 				yield("HEAD", url, response) if block_given?
 				
 				if response.redirection?
-					location = url + response.headers['location']
+					location = url + response.headers["location"]
 					if location.host == url.host
 						Console.logger.debug(self) {"Following redirect to #{location}..."}
 						fetch(statistics, client, location, depth&.-(1), fetched, &block).wait
@@ -87,8 +87,8 @@ module Benchmark
 					end
 				end
 				
-				content_type = response.headers['content-type']
-				unless content_type&.start_with? 'text/html'
+				content_type = response.headers["content-type"]
+				unless content_type&.start_with? "text/html"
 					# puts "Unsupported content type: #{content_type}"
 					return
 				end

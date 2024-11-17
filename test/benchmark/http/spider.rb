@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2022, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require 'disable_console_context'
-require 'benchmark/http/command'
+require "benchmark/http/command"
+
+require "sus/fixtures/console/null_logger"
 
 describe Benchmark::HTTP::Spider do
-	include DisableConsoleContext
+	include Sus::Fixtures::Console::NullLogger
 	
 	let(:spider) {subject.new}
 	let(:statistics) {spider.call(["https://www.codeotaku.com/"])}

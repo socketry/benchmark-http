@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2022, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require 'async/clock'
+require "async/clock"
 
 module Benchmark
 	module HTTP

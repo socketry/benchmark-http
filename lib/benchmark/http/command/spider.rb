@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2022, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require_relative '../spider'
+require_relative "../spider"
 
-require 'async/await'
+require "async/await"
 
-require 'samovar'
-require 'uri'
-require 'console'
+require "samovar"
+require "uri"
+require "console"
 
 module Benchmark
 	module HTTP
@@ -20,8 +20,8 @@ module Benchmark
 				self.description = "Spider a website and report on performance."
 				
 				options do
-					option '-d/--depth <count>', "The number of nested URLs to traverse.", default: 10, type: Integer
-					option '-h/--headers', "Print out the response headers", default: false
+					option "-d/--depth <count>", "The number of nested URLs to traverse.", default: 10, type: Integer
+					option "-h/--headers", "Print out the response headers", default: false
 				end
 				
 				many :urls, "One or more hosts to benchmark"

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2022, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require 'benchmark/http/statistics'
+require "benchmark/http/statistics"
 
 describe Benchmark::HTTP::Stopwatch do
 	let(:stopwatch) {subject.new}

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2022, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require_relative '../seconds'
-require_relative '../statistics'
+require_relative "../seconds"
+require_relative "../statistics"
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
+require "async"
+require "async/http/client"
+require "async/http/endpoint"
 
-require 'samovar'
+require "samovar"
 
 module Benchmark
 	module HTTP
@@ -19,9 +19,9 @@ module Benchmark
 				self.description = "Determine the optimal level of concurrency."
 				
 				options do
-					option '-t/--threshold <factor>', "The acceptable latency penalty when making concurrent requests", default: 1.2, type: Float
-					option '-c/--confidence <factor>', "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
-					option '-m/--minimum <count>', "The minimum number of connections to make", default: 1, type: Integer
+					option "-t/--threshold <factor>", "The acceptable latency penalty when making concurrent requests", default: 1.2, type: Float
+					option "-c/--confidence <factor>", "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
+					option "-m/--minimum <count>", "The minimum number of connections to make", default: 1, type: Integer
 				end
 				
 				many :hosts, "One or more hosts to benchmark"

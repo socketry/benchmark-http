@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Samuel Williams", "Olle Jonsson"]
 	spec.license = "MIT"
 	
-	spec.cert_chain  = ['release.cert']
-	spec.signing_key = File.expand_path('~/.gem/release.pem')
+	spec.cert_chain  = ["release.cert"]
+	spec.signing_key = File.expand_path("~/.gem/release.pem")
 	
 	spec.homepage = "https://github.com/socketry/benchmark-http"
 	
@@ -20,15 +20,14 @@ Gem::Specification.new do |spec|
 		"source_code_uri" => "https://github.com/socketry/benchmark-http.git",
 	}
 	
-	spec.files = Dir.glob(['{bin,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(["{bin,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["benchmark-http"]
 	
 	spec.required_ruby_version = ">= 3.1"
 	
 	spec.add_dependency "async-await"
-	spec.add_dependency "async-http", "~> 0.54"
-	spec.add_dependency "async-io", "~> 1.5"
+	spec.add_dependency "async-http", "~> 0.83"
 	spec.add_dependency "console"
 	spec.add_dependency "samovar", "~> 2.0"
 	spec.add_dependency "xrb-sanitize"

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
-require_relative '../seconds'
-require_relative '../statistics'
+require_relative "../seconds"
+require_relative "../statistics"
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
+require "async"
+require "async/http/client"
+require "async/http/endpoint"
 
-require 'samovar'
+require "samovar"
 
 module Benchmark
 	module HTTP
@@ -20,7 +20,7 @@ module Benchmark
 				
 				options do
 					option "-k/--concurrency <count>", "The number of simultaneous connections to make.", default: 1, type: Integer
-					option '-c/--confidence <factor>', "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
+					option "-c/--confidence <factor>", "The confidence required when computing latency (lower is less reliable but faster)", default: 0.99, type: Float
 				end
 				
 				many :hosts, "One or more hosts to benchmark"

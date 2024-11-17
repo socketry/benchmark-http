@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'xrb/sanitize'
+require "xrb/sanitize"
 
 module Benchmark
 	module HTTP
@@ -19,10 +19,10 @@ module Benchmark
 			attr :links
 			
 			def filter(node)
-				if node.name == 'base'
-					@base = node['href']
-				elsif node.name == 'a' and node['href'] and node['rel'] != 'nofollow'
-					@links << node['href']
+				if node.name == "base"
+					@base = node["href"]
+				elsif node.name == "a" and node["href"] and node["rel"] != "nofollow"
+					@links << node["href"]
 				end
 				
 				node.skip!(TAG)
