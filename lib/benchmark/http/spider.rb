@@ -114,7 +114,7 @@ module Benchmark
 				urls.each do |url|
 					endpoint = Async::HTTP::Endpoint.parse(url, timeout: 10)
 					
-					Async::HTTP::Client.open(endpoint, protocol: endpoint.protocol, connection_limit: 4) do |client|
+					Async::HTTP::Client.open(endpoint, protocol: endpoint.protocol, limit: 4) do |client|
 						fetch(statistics, client, endpoint.url, &block).wait
 					end
 				end
